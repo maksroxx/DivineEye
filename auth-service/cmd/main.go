@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"net"
 
+	_ "github.com/lib/pq"
+
 	"github.com/maksroxx/DivineEye/auth-service/internal/auth"
 	"github.com/maksroxx/DivineEye/auth-service/internal/config"
 	"github.com/maksroxx/DivineEye/auth-service/internal/jwt"

@@ -1,0 +1,7 @@
+server:
+  port: 8080
+
+services:
+  auth: "localhost:50051"
+  alert: "localhost:50052"
+  notification: "localhost:50053"

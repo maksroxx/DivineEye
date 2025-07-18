@@ -5,4 +5,4 @@ jwt:
   secret: "super_secret_key"
 
 database:
-  dsn: "postgres://postgres:postgres@db-auth:5432/authdb?sslmode=disable"
+  dsn: "postgres://myuser:mypassword@localhost:5432/mydatabase?sslmode=disable"
