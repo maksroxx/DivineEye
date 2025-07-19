@@ -1,0 +1,41 @@
+syntax = "proto3";
+
+package alert;
+
+option go_package = "alert-service/proto;alert";
+
+service AlertService {
+    rpc CreateAlert(CreateAlertRequest) returns (CreateAlertResponse);
+    rpc DeleteAlert(DeleteAlertRequest) returns (DeleteAlertResponse);
+    rpc GetAlerts(GetAlertsRequest) returns (GetAlertsResponse);
+}
+
+message CreateAlertRequest {
+    string user_id = 1;
+    string coin = 2;
+    double price = 3;
+}
+
+message CreateAlertResponse {
+    string id = 1;
+}
+
+message DeleteAlertRequest {
+    string id = 1;
+}
+
+message DeleteAlertResponse {}
+
+message GetAlertsRequest {
+    string user_id = 1;
+}
+
+message Alert {
+    string id = 1;
+    string coin = 2;
+    double price = 3;
+}
+
+message GetAlertsResponse {
+    repeated Alert alerts = 1;
+}

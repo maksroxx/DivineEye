@@ -5,7 +5,7 @@ GO           := go
 PROTOC       := /opt/homebrew/bin/protoc
 COMPOSE_FILE := ./postgres/docker-compose.yml
 
-.PHONY: all proto protoauth protogateway build-auth build-gateway run-auth run-gateway docker-up docker-down clean
+.PHONY: all proto protoauth protogateway protoalert build-auth build-gateway run-auth run-gateway docker-up docker-down clean integration-test-alert
 
 ## ====================== PROTO ==========================
 
@@ -29,23 +29,44 @@ protogateway:
 		gateway/proto-clients/auth/auth.proto
 	@echo "✅"
 
+protoalert:
+	@export PATH="$$PATH:$$($(GO) env GOPATH)/bin"
+	$(PROTOC) \
+		--proto_path=alert-service/proto \
+		--go_out=paths=source_relative:alert-service/proto \
+		--go-grpc_out=paths=source_relative:alert-service/proto \
+		alert-service/proto/alert.proto
+	@echo "✅"
+
 ## ====================== BUILD ==========================
 
 build-auth:
-	$(GO) build -o $(BIN_DIR)/auth-service ./auth-service/cmd/main.go
+	$(GO) build -o $(BIN_DIR)/auth ./auth-service/cmd/main.go
 	@echo "✅"
 
 build-gateway:
 	$(GO) build -o $(BIN_DIR)/gateway ./gateway/cmd/main.go
 	@echo "✅"
 
+build-alert:
+	$(GO) build -o $(BIN_DIR)/alert ./alert-service/cmd/main.go
+	@echo "✅"
+
 ## ====================== RUN ==========================
 
 run-auth: build-auth
-	./$(BIN_DIR)/auth-service
+	./$(BIN_DIR)/auth
 
 run-gateway: build-gateway
 	./$(BIN_DIR)/gateway
+
+run-gateway: build-gateway
+	./$(BIN_DIR)/alert
+
+## ====================== TESTS ==========================
+
+integration-test-alert:
+	go test ./alert-service/internal/integration/... -v
 
 ## ====================== DOCKER ==========================
 
