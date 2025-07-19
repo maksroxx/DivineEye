@@ -5,3 +5,7 @@
 - id: "22222222-2222-2222-2222-222222222222"
   email: "testuser2@example.com"
   password: "$2a$12$fakebcryptpasswordstringhashed2"
+
+- id: "33333333-3333-3333-3333-333333333333"
+  email: "fixtureuser@example.com"
+  password: "$2a$12$fakebcryptpasswordstringhashed3"
