@@ -43,6 +43,15 @@ func TestGetAlerts_WithFixtures(t *testing.T) {
 	assert.Equal(t, "ETH", alerts[1].Coin)
 }
 
+func TestGetAlert_WithFixtures(t *testing.T) {
+	db := setupTestDB(t)
+	repo := repository.NewPostgresRepo(db)
+
+	alert, err := repo.GetById(context.Background(), "bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb")
+	require.NoError(t, err)
+	require.Equal(t, "ETH", alert.Coin)
+}
+
 func TestCreateAlert(t *testing.T) {
 	db := setupTestDB(t)
 	repo := repository.NewPostgresRepo(db)

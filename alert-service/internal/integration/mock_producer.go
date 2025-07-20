@@ -9,4 +9,9 @@ func (m *MockProducer) PublishAlertCreated(alertId, userId string) error {
 	return nil
 }
 
+func (m *MockProducer) PublishAlertDeleted(alertId, userId string) error {
+	m.called = true
+	return nil
+}
+
 func (m *MockProducer) Close() error { return nil }

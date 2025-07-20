@@ -50,7 +50,24 @@ func (s *service) Create(ctx context.Context, userId, coin string, price float64
 }
 
 func (s *service) Delete(ctx context.Context, id string) error {
-	return s.repo.Delete(ctx, id)
+	alert, err := s.repo.GetById(ctx, id)
+	if err != nil {
+		s.log.Error("alert not found for delete", zap.Error(err))
+		return err
+	}
+
+	if err := s.repo.Delete(ctx, id); err != nil {
+		s.log.Error("failed to delete alert", zap.Error(err))
+		return err
+	}
+
+	if err := s.producer.PublishAlertDeleted(id, alert.UserID); err != nil {
+		s.log.Error("failed to publish alert_deleted", zap.Error(err))
+		return err
+	}
+
+	s.log.Info("alert deleted", zap.String("alert_id", id))
+	return nil
 }
 
 func (s *service) GetAll(ctx context.Context, userId string) ([]*models.Alert, error) {

@@ -49,3 +49,12 @@ func (r *PostgresRepo) GetAll(ctx context.Context, userId string) ([]*models.Ale
 	}
 	return alerts, nil
 }
+
+func (r *PostgresRepo) GetById(ctx context.Context, id string) (*models.Alert, error) {
+	row := r.db.QueryRowContext(ctx, "SELECT id, user_id, coin, price FROM alerts WHERE id = $1", id)
+	var a models.Alert
+	if err := row.Scan(&a.ID, &a.UserID, &a.Coin, &a.Price); err != nil {
+		return nil, err
+	}
+	return &a, nil
+}
