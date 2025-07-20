@@ -1,0 +1,19 @@
+kafka:
+  brokers:
+    - "localhost:9092"
+  topic: 
+    - "price_updates"
+
+binance:
+  symbols:
+    - "btcusdt"
+    - "ethusdt"
+    - "solusdt"
+    - "bnbusdt"
+    - "adausdt"
+    - "xrpusdt"
+    - "maticusdt"
+    - "dogeusdt"
+    - "dotusdt"
+    - "ltcusdt"
+    # ...

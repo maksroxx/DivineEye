@@ -68,6 +68,12 @@ run-gateway: build-gateway
 integration-test-alert:
 	go test ./alert-service/internal/integration/... -v
 
+integration-test-auth:
+	go test ./auth-service/internal/integration/... -v
+
+integration-test-watcher:
+	go test ./price-watcher/internal/integration/... -v
+
 ## ====================== DOCKER ==========================
 
 docker-up:
