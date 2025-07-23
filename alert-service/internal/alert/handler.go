@@ -16,7 +16,7 @@ func NewGRPCServer(svc Servicer) *GRPCServer {
 }
 
 func (s *GRPCServer) CreateAlert(ctx context.Context, req *proto.CreateAlertRequest) (*proto.CreateAlertResponse, error) {
-	id, err := s.svc.Create(ctx, req.UserId, req.Coin, req.Price)
+	id, err := s.svc.Create(ctx, req.UserId, req.Coin, req.Direction, req.Price)
 	if err != nil {
 		return nil, err
 	}
@@ -35,9 +35,10 @@ func (s *GRPCServer) GetAlerts(ctx context.Context, req *proto.GetAlertsRequest)
 	var pbAlerts []*proto.Alert
 	for _, a := range alerts {
 		pbAlerts = append(pbAlerts, &proto.Alert{
-			Id:    a.ID,
-			Coin:  a.Coin,
-			Price: a.Price,
+			Id:        a.ID,
+			Coin:      a.Coin,
+			Direction: a.Direction,
+			Price:     a.Price,
 		})
 	}
 	return &proto.GetAlertsResponse{Alerts: pbAlerts}, nil

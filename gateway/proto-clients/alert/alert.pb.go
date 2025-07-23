@@ -396,7 +396,7 @@ const file_alert_proto_rawDesc = "" +
 	"\fAlertService\x12D\n" +
 	"\vCreateAlert\x12\x19.alert.CreateAlertRequest\x1a\x1a.alert.CreateAlertResponse\x12D\n" +
 	"\vDeleteAlert\x12\x19.alert.DeleteAlertRequest\x1a\x1a.alert.DeleteAlertResponse\x12>\n" +
-	"\tGetAlerts\x12\x17.alert.GetAlertsRequest\x1a\x18.alert.GetAlertsResponseB\x1bZ\x19alert-service/proto;alertb\x06proto3"
+	"\tGetAlerts\x12\x17.alert.GetAlertsRequest\x1a\x18.alert.GetAlertsResponseB#Z!gateway/proto-clients/alert;alertb\x06proto3"
 
 var (
 	file_alert_proto_rawDescOnce sync.Once

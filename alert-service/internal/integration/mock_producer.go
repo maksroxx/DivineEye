@@ -4,7 +4,7 @@ type MockProducer struct {
 	called bool
 }
 
-func (m *MockProducer) PublishAlertCreated(alertId, userId string) error {
+func (m *MockProducer) PublishAlertCreated(alertId, userId, coin, direction string, price float64) error {
 	m.called = true
 	return nil
 }

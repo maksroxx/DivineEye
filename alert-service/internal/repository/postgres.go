@@ -17,8 +17,8 @@ func NewPostgresRepo(db *sql.DB) AlertRepository {
 
 func (r *PostgresRepo) Create(ctx context.Context, alert *models.Alert) error {
 	_, err := r.db.ExecContext(ctx,
-		`INSERT INTO alerts (id, user_id, coin, price) VALUES ($1, $2, $3, $4)`,
-		alert.ID, alert.UserID, alert.Coin, alert.Price,
+		`INSERT INTO alerts (id, user_id, coin, price, direction) VALUES ($1, $2, $3, $4, $5)`,
+		alert.ID, alert.UserID, alert.Coin, alert.Price, alert.Direction,
 	)
 	return err
 }
@@ -30,7 +30,7 @@ func (r *PostgresRepo) Delete(ctx context.Context, id string) error {
 
 func (r *PostgresRepo) GetAll(ctx context.Context, userId string) ([]*models.Alert, error) {
 	rows, err := r.db.QueryContext(ctx,
-		`SELECT id, coin, price FROM alerts WHERE user_id = $1`,
+		`SELECT id, coin, price, direction FROM alerts WHERE user_id = $1`,
 		userId,
 	)
 	if err != nil {
@@ -41,7 +41,7 @@ func (r *PostgresRepo) GetAll(ctx context.Context, userId string) ([]*models.Ale
 	var alerts []*models.Alert
 	for rows.Next() {
 		var a models.Alert
-		if err := rows.Scan(&a.ID, &a.Coin, &a.Price); err != nil {
+		if err := rows.Scan(&a.ID, &a.Coin, &a.Price, &a.Direction); err != nil {
 			return nil, err
 		}
 		a.UserID = userId
@@ -51,9 +51,9 @@ func (r *PostgresRepo) GetAll(ctx context.Context, userId string) ([]*models.Ale
 }
 
 func (r *PostgresRepo) GetById(ctx context.Context, id string) (*models.Alert, error) {
-	row := r.db.QueryRowContext(ctx, "SELECT id, user_id, coin, price FROM alerts WHERE id = $1", id)
+	row := r.db.QueryRowContext(ctx, "SELECT id, user_id, coin, price, direction FROM alerts WHERE id = $1", id)
 	var a models.Alert
-	if err := row.Scan(&a.ID, &a.UserID, &a.Coin, &a.Price); err != nil {
+	if err := row.Scan(&a.ID, &a.UserID, &a.Coin, &a.Price, &a.Direction); err != nil {
 		return nil, err
 	}
 	return &a, nil

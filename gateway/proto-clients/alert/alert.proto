@@ -14,6 +14,7 @@ message CreateAlertRequest {
     string user_id = 1;
     string coin = 2;
     double price = 3;
+    string direction = 4;
 }
 
 message CreateAlertResponse {
@@ -34,6 +35,7 @@ message Alert {
     string id = 1;
     string coin = 2;
     double price = 3;
+    string direction = 4;
 }
 
 message GetAlertsResponse {

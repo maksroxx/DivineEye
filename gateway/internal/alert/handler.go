@@ -18,15 +18,16 @@ func (h *AlertHandler) Create(c *gin.Context) {
 	userID := c.GetString("user_id")
 
 	var req struct {
-		Coin  string  `json:"coin"`
-		Price float64 `json:"price"`
+		Coin      string  `json:"coin"`
+		Direction string  `json:"direction"`
+		Price     float64 `json:"price"`
 	}
 	if err := c.BindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request"})
 		return
 	}
 
-	id, err := h.AlertService.Create(c.Request.Context(), userID, req.Coin, req.Price)
+	id, err := h.AlertService.Create(c.Request.Context(), userID, req.Coin, req.Direction, req.Price)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

@@ -12,7 +12,7 @@ import (
 )
 
 type Servicer interface {
-	Create(ctx context.Context, userId, coin string, price float64) (string, error)
+	Create(ctx context.Context, userId, coin, direction string, price float64) (string, error)
 	Delete(ctx context.Context, id string) error
 	GetAll(ctx context.Context, userId string) ([]*models.Alert, error)
 }
@@ -27,22 +27,23 @@ func NewService(repo repository.AlertRepository, producer kafka.Producerer, log 
 	return &service{repo: repo, producer: producer, log: log}
 }
 
-func (s *service) Create(ctx context.Context, userId, coin string, price float64) (string, error) {
+func (s *service) Create(ctx context.Context, userId, coin, direction string, price float64) (string, error) {
 	id := uuid.NewString()
 	a := &models.Alert{
-		ID:     id,
-		UserID: userId,
-		Coin:   coin,
-		Price:  price,
+		ID:        id,
+		UserID:    userId,
+		Coin:      coin,
+		Price:     price,
+		Direction: direction,
 	}
 
 	if err := s.repo.Create(ctx, a); err != nil {
 		s.log.Error("failed to create alert", zap.Error(err))
 		return "", err
 	}
-	s.log.Info("alert created", zap.String("alert_id", id))
+	s.log.Info("alert created", zap.String("alert_id", id), zap.Any("direction", direction))
 
-	if err := s.producer.PublishAlertCreated(id, userId); err != nil {
+	if err := s.producer.PublishAlertCreated(id, userId, coin, direction, price); err != nil {
 		s.log.Error("failed to publish alert_created", zap.Error(err))
 		return "", err
 	}

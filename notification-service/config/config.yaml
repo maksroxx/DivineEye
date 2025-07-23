@@ -1,11 +1,9 @@
-server:
-  grpc_port: 50052
-
 database:
   dsn: "postgres://myuser:mypassword@localhost:5432/mydatabase?sslmode=disable"
-
 kafka:
   brokers:
     - "localhost:9092"
-  topics: 
-    - "alerts"
+  alerts_topic: "alerts"
+  prices_topic: "price_updates"
+fcm:
+  server_key: "YOUR_FCM_KEY"

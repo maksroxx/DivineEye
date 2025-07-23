@@ -26,7 +26,7 @@ func main() {
 	defer log.Sync()
 
 	db, _ := sql.Open("postgres", cfg.Database.Dsn)
-	producer, err := kafka.NewProducer(kafka.ConfigProducer{Brokers: cfg.Kafka.Brokers, Topics: cfg.Kafka.Topic})
+	producer, err := kafka.NewProducer(kafka.ConfigProducer{Brokers: cfg.Kafka.Brokers, Topics: cfg.Kafka.Topic}, log)
 	if err != nil {
 		panic(err)
 	}

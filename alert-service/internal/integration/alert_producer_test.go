@@ -20,23 +20,23 @@ func TestAlertService_KafkaPublish(t *testing.T) {
 	brokers := []string{"localhost:9092"}
 	topic := "alerts_test"
 
+	log := logger.NewZapLogger()
+	defer log.Sync()
+
 	producer, err := kafka.NewProducer(kafka.ConfigProducer{
 		Brokers: brokers,
 		Topics:  []string{topic},
-	})
+	}, log)
 	require.NoError(t, err)
 	defer producer.Close()
 
 	db := setupTestDB(t)
 	repo := repository.NewPostgresRepo(db)
 
-	log := logger.NewZapLogger()
-	defer log.Sync()
-
 	svc := alert.NewService(repo, producer, log)
 
 	userID := "11111111-1111-1111-1111-111111111111"
-	_, err = svc.Create(context.Background(), userID, "BTC", 67000)
+	_, err = svc.Create(context.Background(), userID, "BTC", "above", 67000)
 	require.NoError(t, err)
 
 	// consumer

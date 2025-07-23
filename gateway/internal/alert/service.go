@@ -8,7 +8,7 @@ import (
 )
 
 type AlertService interface {
-	Create(ctx context.Context, userID, coin string, price float64) (string, error)
+	Create(ctx context.Context, userID, coin, direction string, price float64) (string, error)
 	Get(ctx context.Context, userID string) ([]*pb.Alert, error)
 	Delete(ctx context.Context, id string) error
 }
@@ -21,11 +21,12 @@ func NewAlertService(client *grpcclient.AlertClient) AlertService {
 	return &alertService{client: client}
 }
 
-func (s *alertService) Create(ctx context.Context, userID, coin string, price float64) (string, error) {
+func (s *alertService) Create(ctx context.Context, userID, coin, direction string, price float64) (string, error) {
 	resp, err := s.client.CreateAlert(ctx, &pb.CreateAlertRequest{
-		UserId: userID,
-		Coin:   coin,
-		Price:  price,
+		UserId:    userID,
+		Coin:      coin,
+		Price:     price,
+		Direction: direction,
 	})
 	if err != nil {
 		return "", err

@@ -9,7 +9,7 @@ COMPOSE_FILE := ./postgres/docker-compose.yml
 
 ## ====================== PROTO ==========================
 
-proto: protoauth protogateway
+proto: protoauth protogateway-auth protogateway-alert protoalert
 
 protoauth:
 	@export PATH="$$PATH:$$($(GO) env GOPATH)/bin"
@@ -20,13 +20,22 @@ protoauth:
 		auth-service/proto/auth.proto
 	@echo "✅"
 
-protogateway:
+protogateway-auth:
 	@export PATH="$$PATH:$$($(GO) env GOPATH)/bin"
 	$(PROTOC) \
 		--proto_path=gateway/proto-clients/auth \
 		--go_out=paths=source_relative:gateway/proto-clients/auth \
 		--go-grpc_out=paths=source_relative:gateway/proto-clients/auth \
 		gateway/proto-clients/auth/auth.proto
+	@echo "✅"
+
+protogateway-alert:
+	@export PATH="$$PATH:$$($(GO) env GOPATH)/bin"
+	$(PROTOC) \
+		--proto_path=gateway/proto-clients/alert \
+		--go_out=paths=source_relative:gateway/proto-clients/alert \
+		--go-grpc_out=paths=source_relative:gateway/proto-clients/alert \
+		gateway/proto-clients/alert/alert.proto
 	@echo "✅"
 
 protoalert:
@@ -52,6 +61,14 @@ build-alert:
 	$(GO) build -o $(BIN_DIR)/alert ./alert-service/cmd/main.go
 	@echo "✅"
 
+build-watcher:
+	$(GO) build -o $(BIN_DIR)/watcher ./price-watcher/cmd/main.go
+	@echo "✅"
+
+build-notification:
+	$(GO) build -o $(BIN_DIR)/notification ./notification-service/cmd/main.go
+	@echo "✅"
+
 ## ====================== RUN ==========================
 
 run-auth: build-auth
@@ -60,8 +77,14 @@ run-auth: build-auth
 run-gateway: build-gateway
 	./$(BIN_DIR)/gateway
 
-run-gateway: build-gateway
+run-alert: build-alert
 	./$(BIN_DIR)/alert
+
+run-watcher: build-watcher
+	./$(BIN_DIR)/watcher
+
+run-notification: build-notification
+	./$(BIN_DIR)/notification
 
 ## ====================== TESTS ==========================
 
@@ -73,6 +96,12 @@ integration-test-auth:
 
 integration-test-watcher:
 	go test ./price-watcher/internal/integration/... -v
+
+integration-test-all: integration-test-alert integration-test-auth integration-test-watcher
+
+test-all:
+	go test ./... -v
+	@echo "✅ All tests complete"
 
 ## ====================== DOCKER ==========================
 
