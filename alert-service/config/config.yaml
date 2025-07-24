@@ -5,7 +5,9 @@ database:
   dsn: "postgres://myuser:mypassword@localhost:5432/mydatabase?sslmode=disable"
 
 kafka:
+  group: "alert-triggered-consumer"
   brokers:
     - "localhost:9092"
   topics: 
     - "alerts"
+    - "alert_triggered"

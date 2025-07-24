@@ -50,8 +50,8 @@ func (r *PostgresRepo) GetAlertsForCoin(ctx context.Context, coin string) ([]*mo
 func (r *PostgresRepo) GetTriggeredAlerts(ctx context.Context, coin string, price float64) ([]*models.Alert, error) {
 	rows, err := r.db.QueryContext(ctx, `
 		SELECT id, user_id, coin, price, direction 
-		FROM notification_alerts 
-		WHERE coin = $1 AND (
+		FROM alerts 
+		WHERE coin = $1 AND triggered = false AND (
 			(direction = 'above' AND price <= $2) OR
 			(direction = 'below' AND price >= $2)
 		)
@@ -70,4 +70,9 @@ func (r *PostgresRepo) GetTriggeredAlerts(ctx context.Context, coin string, pric
 		alerts = append(alerts, &a)
 	}
 	return alerts, nil
+}
+
+func (r *PostgresRepo) MarkAlertTriggered(ctx context.Context, id string) error {
+	_, err := r.db.ExecContext(ctx, `UPDATE alerts SET triggered = true WHERE id = $1`, id)
+	return err
 }

@@ -37,7 +37,7 @@ func (h *Handler) ConsumeClaim(sess sarama.ConsumerGroupSession, claim sarama.Co
 		case "price_updates":
 			h.handlePriceEvent(sess, msg)
 		default:
-			h.Log.Error("received message from unknown topic", zap.String("topic", msg.Topic))
+			h.Log.Error("[Handler.go] Received message from unknown topic", zap.String("topic", msg.Topic))
 		}
 		sess.MarkMessage(msg, "")
 	}
@@ -56,7 +56,7 @@ func (h *Handler) handleAlertEvent(sess sarama.ConsumerGroupSession, msg *sarama
 
 	var payload AlertPayload
 	if err := json.Unmarshal(msg.Value, &payload); err != nil {
-		h.Log.Error("failed to unmarshal alert event", zap.Error(err))
+		h.Log.Error("[Handler.go] Failed to unmarshal alert event", zap.Error(err))
 		return
 	}
 
@@ -70,20 +70,20 @@ func (h *Handler) handleAlertEvent(sess sarama.ConsumerGroupSession, msg *sarama
 			Price:     payload.Price,
 		}
 		if err := h.Repo.SaveAlert(context.Background(), alert); err != nil {
-			h.Log.Error("failed to save alert", zap.Error(err))
+			h.Log.Error("[Handler.go] Failed to save alert", zap.Error(err))
 		} else {
-			h.Log.Info("alert created", zap.String("alert_id", payload.AlertID))
+			h.Log.Info("[Handler.go] Alert created", zap.String("alert_id", payload.AlertID))
 		}
 
 	case "alert_deleted":
 		if err := h.Repo.DeleteAlert(context.Background(), payload.AlertID); err != nil {
-			h.Log.Error("failed to delete alert", zap.Error(err))
+			h.Log.Error("[Handler.go] Failed to delete alert", zap.Error(err))
 		} else {
-			h.Log.Info("alert deleted", zap.String("alert_id", payload.AlertID))
+			h.Log.Info("[Handler.go] Alert deleted", zap.String("alert_id", payload.AlertID))
 		}
 
 	default:
-		h.Log.Info("unknown alert type", zap.String("type", payload.Type))
+		h.Log.Info("[Handler.go] Unknown alert type", zap.String("type", payload.Type))
 	}
 }
 
@@ -93,7 +93,7 @@ func (h *Handler) handlePriceEvent(sess sarama.ConsumerGroupSession, msg *sarama
 		Price  float64 `json:"price"`
 	}
 	if err := json.Unmarshal(msg.Value, &payload); err != nil {
-		h.Log.Error("failed to unmarshal price event", zap.Error(err))
+		h.Log.Error("[Handler.go] Failed to unmarshal price event", zap.Error(err))
 		return
 	}
 	h.Notifier.ProcessPriceUpdate(context.Background(), payload.Symbol, payload.Price)

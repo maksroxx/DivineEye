@@ -11,4 +11,5 @@ type AlertRepository interface {
 	Delete(ctx context.Context, id string) error
 	GetAll(ctx context.Context, userId string) ([]*models.Alert, error)
 	GetById(ctx context.Context, id string) (*models.Alert, error)
+	MarkAlertTriggered(ctx context.Context, id string) error
 }

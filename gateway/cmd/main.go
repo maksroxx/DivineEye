@@ -2,6 +2,10 @@ package main
 
 import (
 	"fmt"
+	"os"
+	"os/signal"
+	"syscall"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/maksroxx/DivineEye/gateway/internal/alert"
@@ -47,4 +51,11 @@ func main() {
 	addr := fmt.Sprintf(":%d", cfg.Server.Address)
 	log.Info("Api Gateway running", zap.String("addr", addr))
 	r.Run(addr)
+
+	stop := make(chan os.Signal, 1)
+	signal.Notify(stop, syscall.SIGTERM, syscall.SIGINT)
+	<-stop
+
+	log.Info("🧹 shutting down gracefully...")
+	time.Sleep(2 * time.Second)
 }

@@ -9,6 +9,7 @@ import (
 	"time"
 
 	_ "github.com/lib/pq"
+	"go.uber.org/zap"
 
 	"github.com/maksroxx/DivineEye/notification-service/internal/config"
 	"github.com/maksroxx/DivineEye/notification-service/internal/consumer"
@@ -44,19 +45,26 @@ func main() {
 		panic(err)
 	}
 
-	notifier := service.NewNotifi(repo, fcmSender, logg)
+	producer, err := kafka.NewProducer(cfg.Kafka.Brokers, cfg.Kafka.TriggeredTopic, logg)
+	if err != nil {
+		logg.Error("Failed to start kafka producer", zap.Error(err))
+		return
+	}
+	defer producer.Close()
+
+	notifier := service.NewNotifi(repo, fcmSender, logg, producer)
 
 	kafkaTopics := []string{cfg.Kafka.AlertTopic, cfg.Kafka.PricesTopic}
 	consumerGroup := consumer.NewHandler(repo, notifier, logg)
 
-	go kafka.StartConsumerGroup(ctx, cfg.Kafka.Brokers, "notification-consumer", kafkaTopics, consumerGroup, logg)
+	kafka.StartConsumerGroup(ctx, cfg.Kafka.Brokers, cfg.Kafka.Group, kafkaTopics, consumerGroup, logg)
 
-	logg.Info("notification-service started")
+	logg.Info("Notification-service started")
 
 	stop := make(chan os.Signal, 1)
 	signal.Notify(stop, syscall.SIGTERM, syscall.SIGINT)
 	<-stop
 
-	logg.Info("🧹 shutting down gracefully...")
+	logg.Info("🧹 Shutting down gracefully...")
 	time.Sleep(2 * time.Second)
 }

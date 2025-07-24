@@ -50,7 +50,7 @@ func (w *Watcher) Run(ctx context.Context) error {
 		go func(chunk []string) {
 			for {
 				if err := w.runConnection(ctx, chunk); err != nil {
-					w.Log.Error("Watcher", zap.String("chunk_failed", fmt.Sprintf("[reconnect] chunk failed, reconnecting... %v", err)))
+					w.Log.Error("[Watcher.go]", zap.String("chunk_failed", fmt.Sprintf("[reconnect] chunk failed, reconnecting... %v", err)))
 					time.Sleep(5 * time.Second)
 				}
 			}
@@ -104,7 +104,7 @@ func (w *Watcher) runConnection(ctx context.Context, symbols []string) error {
 			var price float64
 			fmt.Sscanf(parsed.Data.Price, "%f", &price)
 
-			w.Log.Info("Watcher", zap.String("symbol_price", fmt.Sprintf("[Binance] %s -> %.2f", symbol, price)))
+			w.Log.Info("[Watcher.go]", zap.String("symbol_price", fmt.Sprintf("[Binance] %s -> %.2f", symbol, price)))
 			_ = w.Producer.PublishPrice(symbol, price)
 		}
 	}

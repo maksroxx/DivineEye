@@ -16,6 +16,7 @@ type Config struct {
 	} `yaml:"database"`
 
 	Kafka struct {
+		Group   string   `yaml:"group"`
 		Brokers []string `yaml:"brokers"`
 		Topic   []string `yaml:"topics"`
 	} `yaml:"kafka"`

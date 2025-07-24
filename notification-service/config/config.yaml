@@ -1,9 +1,11 @@
 database:
   dsn: "postgres://myuser:mypassword@localhost:5432/mydatabase?sslmode=disable"
 kafka:
+  group: "notification-consumer"
   brokers:
     - "localhost:9092"
   alerts_topic: "alerts"
   prices_topic: "price_updates"
+  triggered_topic: "alert_triggered"
 fcm:
   server_key: "YOUR_FCM_KEY"

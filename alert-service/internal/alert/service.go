@@ -38,13 +38,13 @@ func (s *service) Create(ctx context.Context, userId, coin, direction string, pr
 	}
 
 	if err := s.repo.Create(ctx, a); err != nil {
-		s.log.Error("failed to create alert", zap.Error(err))
+		s.log.Error("[Service.go] Failed to create alert", zap.Error(err))
 		return "", err
 	}
-	s.log.Info("alert created", zap.String("alert_id", id), zap.Any("direction", direction))
+	s.log.Info("[Service.go] Alert created", zap.String("alert_id", id), zap.Any("direction", direction))
 
 	if err := s.producer.PublishAlertCreated(id, userId, coin, direction, price); err != nil {
-		s.log.Error("failed to publish alert_created", zap.Error(err))
+		s.log.Error("[Service.go] Failed to publish alert_created", zap.Error(err))
 		return "", err
 	}
 	return id, nil
@@ -53,21 +53,21 @@ func (s *service) Create(ctx context.Context, userId, coin, direction string, pr
 func (s *service) Delete(ctx context.Context, id string) error {
 	alert, err := s.repo.GetById(ctx, id)
 	if err != nil {
-		s.log.Error("alert not found for delete", zap.Error(err))
+		s.log.Error("[Service.go] Alert not found for delete", zap.Error(err))
 		return err
 	}
 
 	if err := s.repo.Delete(ctx, id); err != nil {
-		s.log.Error("failed to delete alert", zap.Error(err))
+		s.log.Error("[Service.go] Failed to delete alert", zap.Error(err))
 		return err
 	}
 
 	if err := s.producer.PublishAlertDeleted(id, alert.UserID); err != nil {
-		s.log.Error("failed to publish alert_deleted", zap.Error(err))
+		s.log.Error("[Service.go] Failed to publish alert_deleted", zap.Error(err))
 		return err
 	}
 
-	s.log.Info("alert deleted", zap.String("alert_id", id))
+	s.log.Info("[Service.go] Alert deleted", zap.String("alert_id", id))
 	return nil
 }
 

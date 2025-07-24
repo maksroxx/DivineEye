@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/IBM/sarama"
-	"github.com/maksroxx/DivineEye/notification-service/internal/logger"
+	"github.com/maksroxx/DivineEye/alert-service/internal/logger"
 	"go.uber.org/zap"
 )
 

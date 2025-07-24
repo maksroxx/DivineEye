@@ -58,3 +58,8 @@ func (r *PostgresRepo) GetById(ctx context.Context, id string) (*models.Alert, e
 	}
 	return &a, nil
 }
+
+func (r *PostgresRepo) MarkAlertTriggered(ctx context.Context, id string) error {
+	_, err := r.db.ExecContext(ctx, `UPDATE alerts SET triggered = TRUE WHERE id = $1`, id)
+	return err
+}

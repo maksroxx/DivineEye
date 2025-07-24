@@ -39,10 +39,10 @@ func (s *authService) Register(ctx context.Context, email, password string) (str
 
 	err := s.repo.CreateUser(ctx, id, email, hex.EncodeToString(hash[:]))
 	if err != nil {
-		s.logger.Error("failed to create user", zap.Error(err))
+		s.logger.Error("[Service.go] Failed to create user", zap.Error(err))
 		return "", err
 	}
-	s.logger.Info("user registered", zap.String("email", email))
+	s.logger.Info("[Service.go] User registered", zap.String("email", email))
 
 	return jwt.Generate(id)
 }
@@ -56,7 +56,7 @@ func (s *authService) Login(ctx context.Context, email, password string) (string
 	if user.Password != hex.EncodeToString(hash[:]) {
 		return "", ErrUnauthorized
 	}
-	s.logger.Info("user logged in", zap.String("email", email))
+	s.logger.Info("[Service.go] User logged in", zap.String("email", email))
 	return jwt.Generate(user.Id)
 }
 

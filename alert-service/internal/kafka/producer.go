@@ -33,7 +33,6 @@ func NewProducer(cfg ConfigProducer, log logger.Logger) (*Producer, error) {
 }
 
 func (p *Producer) PublishAlertCreated(alertId, userId, coin, direction string, price float64) error {
-	p.log.Info("PublishAlertCreated", zap.Any("direction", direction))
 	payload := map[string]any{
 		"alert_id":  alertId,
 		"user_id":   userId,
@@ -53,7 +52,7 @@ func (p *Producer) PublishAlertCreated(alertId, userId, coin, direction string, 
 		Value:   sarama.ByteEncoder(data),
 	}
 
-	p.log.Info("publishing alert", zap.String("number", alertId))
+	p.log.Info("[Producer.go] Publishing alert", zap.String("number", alertId))
 	_, _, err := p.producer.SendMessage(msg)
 	return err
 }
@@ -76,6 +75,7 @@ func (p *Producer) PublishAlertDeleted(alertId, userId string) error {
 		Value:   sarama.ByteEncoder(data),
 	}
 
+	p.log.Info("[Producer.go] Publishing alert delete", zap.String("number", alertId))
 	_, _, err := p.producer.SendMessage(msg)
 	return err
 }

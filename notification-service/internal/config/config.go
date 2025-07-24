@@ -12,9 +12,11 @@ type Config struct {
 	} `yaml:"database"`
 
 	Kafka struct {
-		Brokers     []string `yaml:"brokers"`
-		AlertTopic  string   `yaml:"alerts_topic"`
-		PricesTopic string   `yaml:"prices_topic"`
+		Group          string   `yaml:"group"`
+		Brokers        []string `yaml:"brokers"`
+		AlertTopic     string   `yaml:"alerts_topic"`
+		PricesTopic    string   `yaml:"prices_topic"`
+		TriggeredTopic string   `yaml:"triggered_topic"`
 	} `yaml:"kafka"`
 
 	Fcm struct {

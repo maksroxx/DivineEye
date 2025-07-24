@@ -4,6 +4,10 @@ import (
 	"database/sql"
 	"fmt"
 	"net"
+	"os"
+	"os/signal"
+	"syscall"
+	"time"
 
 	_ "github.com/lib/pq"
 
@@ -22,12 +26,12 @@ func main() {
 	defer log.Sync()
 	cfg, err := config.Load("./auth-service/config/config.yaml")
 	if err != nil {
-		log.Error("failed to load config", zap.Error(err))
+		panic(err)
 	}
 
 	db, err := sql.Open("postgres", cfg.Database.DSN)
 	if err != nil {
-		log.Error("failed to connect db", zap.Error(err))
+		panic(err)
 	}
 
 	jwt.Init(cfg.JWT.Secret)
@@ -38,11 +42,18 @@ func main() {
 
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", cfg.Server.GRPCPort))
 	if err != nil {
-		log.Error("failed to listen", zap.Error(err))
+		log.Error("Failed to listen", zap.Error(err))
 	}
 
 	grpcSrv := grpc.NewServer()
 	pb.RegisterAuthServiceServer(grpcSrv, grpcServer)
 	log.Info("Auth Service running", zap.Int("port", cfg.Server.GRPCPort))
 	grpcSrv.Serve(lis)
+
+	stop := make(chan os.Signal, 1)
+	signal.Notify(stop, syscall.SIGTERM, syscall.SIGINT)
+	<-stop
+
+	log.Info("🧹 Shutting down gracefully...")
+	time.Sleep(2 * time.Second)
 }
